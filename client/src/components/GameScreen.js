@@ -3,7 +3,7 @@ import "./../styles/Game.css";
 import { useLocation } from 'react-router-dom';
 import { io } from 'socket.io-client';
 
-const socket = io("http://localhost:5001", {
+const socket = io("https://teamriddleapp.onrender.com", {
     transports: ['websocket', 'polling'],
     autoConnect: false
 });

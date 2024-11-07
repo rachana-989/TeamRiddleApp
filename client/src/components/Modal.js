@@ -23,7 +23,7 @@ const Modal = ({ isOpen, onClose, onSubmit, mode }) => {
 
       if (mode === 'host') {
         // Create room API call
-        response = await axios.post('http://localhost:5001/api/rooms/create-room', { roomName: inputValue, nickName });
+        response = await axios.post(`${process.env.REACT_APP_API_URL}/api/rooms/create-room`, { roomName: inputValue, nickName });
         if (response.data.roomCode) {
           onSubmit({ roomCode: response.data.roomCode, roomName: response.data.roomName });
           navigate('/lobby', { state: { roomCode: response.data.roomCode, nickName, members: [nickName], roomName: inputValue } });
@@ -32,7 +32,7 @@ const Modal = ({ isOpen, onClose, onSubmit, mode }) => {
         }
       } else if (mode === 'join') {
         // Join room API call
-        response = await axios.post('http://localhost:5001/api/rooms/join-room', { roomCode: inputValue, nickName });
+        response = await axios.post(`${process.env.REACT_APP_API_URL}/api/rooms/join-room`, { roomCode: inputValue, nickName });
         if (response.data.members) {
           navigate('/lobby', { state: { roomCode: inputValue, nickName, members: response.data.members, roomName: response.data.roomName } });
 

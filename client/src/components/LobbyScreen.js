@@ -4,7 +4,7 @@ import "./../styles/Lobby.css";
 import { io } from 'socket.io-client';
 import { useNavigate } from 'react-router-dom';
 
-const socket = io('http://localhost:5001');
+const socket = io('https://teamriddleapp.onrender.com');
 
 const LobbyScreen = () => {
     const location = useLocation();
