@@ -1,0 +1,121 @@
+.container-lobby {
+    background-color: #2e2d55;
+    flex: 1;
+    height: 100vh;
+    overflow: auto
+}
+
+.details-container {
+    /* border: 1px solid #ffffff; */
+    height: 300px;
+    align-content: center;
+}
+
+.description {
+    color: #ffffff;
+    text-align: center;
+    font-family: 'fantasy';
+    font-size: 20px;
+}
+
+.list-container {
+    box-shadow: 0 3px 6px rgba(0, 0, 0, 0.96);
+    background-color: #363762;
+    padding: 10px;
+    margin-left: -30px;
+    margin-right: 10px;
+    /* opacity: 0.1; */
+}
+
+.list-container-admin {
+    box-shadow: 0 3px 6px rgba(0, 0, 0, 0.96);
+    background-color: #363762;
+    padding: 10px;
+    /* margin-left: 10px;
+    margin-right: 10px;
+    margin-top: 10px; */
+
+    /* opacity: 0.1; */
+}
+
+.list {
+    color: #ffffff;
+    /* text-align: center; */
+    list-style-type: none;
+    font-size: 15px;
+    font-family: 'fantasy';
+    background-color: #2e2d55;
+    width: 100px;
+    border-radius: 5px;
+    /* box-shadow: 0 3px 6px rgba(0, 0, 0, 0.96); */
+    padding: 10px;
+    text-transform: capitalize;
+    align-self: center;
+    margin: auto;
+    text-align: center;
+}
+
+.list-admin {
+    color: #ffffff;
+    /* text-align: center; */
+    list-style-type: none;
+    font-size: 15px;
+    font-family: 'fantasy';
+    background-color: #2e2d55;
+    width: 100px;
+    border-radius: 5px;
+    margin: auto;
+    text-align: center;
+    /* box-shadow: 0 3px 6px rgba(0, 0, 0, 0.96); */
+    padding: 10px;
+    text-transform: capitalize;
+    align-self: center;
+}
+
+.room-code-container {
+    display: flex;
+    flex-direction: row;
+    justify-content: center;
+    border: 1px solid #ffffff;
+    margin: auto;
+    padding: 10px;
+    width: 300px;
+    align-items: center;
+
+}
+
+.copy-button {
+    background-color: transparent;
+    border: none;
+    cursor: pointer;
+    font-size: 20px;
+    margin-left: 10px;
+    color: #fbfbfa;
+}
+
+.players-container {
+    /* border: 1px solid #fff; */
+    width: 200px;
+    /* margin-left: 100px;
+    margin-right: 100px; */
+    margin: auto;
+}
+
+.randomize-button {
+    width: 150px;
+    background-color: #6a6ce7;
+    padding: 10px;
+    margin: 10px;
+    margin-left: 25px;
+    font-family: 'fantasy';
+    border-radius: 10px;
+    border: .5px solid #2e2d55;
+    border-bottom: 2px solid #8d8bb6;
+    border-right: 2px solid #8d8bb6;
+}
+
+.start-button {
+    color: #ffffff;
+    background-color: #6a6ce7;
+    text-align: center;
+}

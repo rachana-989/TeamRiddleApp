@@ -1,0 +1,49 @@
+.modal-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-color: rgba(0, 0, 0, 0.7);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 1000;
+}
+
+.modal-content {
+  background: white;
+  padding: 40px;
+  border-radius: 10px;
+  width: 300px;
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.3);
+  border: 10px solid #6a6ce7;
+}
+
+.modal-buttons-container {
+  display: flex;
+  justify-content: space-between;
+  margin-top: 10px;
+
+}
+
+.modals-button {
+  background-color: #2e2d55;
+}
+
+.inputs-container {
+  /* display: flex; */
+  padding: 10px;
+  display: flex;
+  justify-content: center;
+  flex-direction: column;
+}
+
+.modal-inputs {
+  padding: 10px;
+  margin: 5px;
+  /* border: 1px solid #0f0e0e; */
+  background-color: "#2e2d55";
+  align-self: center;
+  font-family: 'fantasy';
+}

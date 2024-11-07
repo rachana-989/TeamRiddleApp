@@ -1,0 +1,17 @@
+.game-container{
+    background-color: #2e2d55;
+    height: 100vh;
+    padding: 20px;
+    
+}
+.game-title{
+    color: #ffffff;
+    font-family: 'fantasy';
+}
+.game-text{
+    color: #ffffff;
+    font-family: 'fantasy';
+}
+.game-riddle-container{
+    display: flex;
+}

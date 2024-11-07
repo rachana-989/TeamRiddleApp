@@ -1,0 +1,43 @@
+.container {
+    /* background-color: white; */
+    align-content: center;
+    flex: 1;
+    border: 100px solid #8d8bb6;
+    height: 100vh;
+    background-color: #2e2d55;
+}
+
+.title {
+    color: #ffffff;
+    text-align: center;
+    font-family: 'fantasy';
+
+}
+
+.content {
+    color: #ffffff;
+    text-align: center;
+    font-family: 'fantasy';
+}
+
+.button-container {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    flex-grow: 1
+}
+
+.button {
+    width: 250px;
+    background-color: #6a6ce7;
+    padding: 10px;
+    margin: 10px;
+    font-family: 'fantasy';
+    border-radius: 10px;
+    border: .5px solid #2e2d55;
+    border-bottom: 2px solid #8d8bb6;
+    border-right: 2px solid #8d8bb6;
+    /* background-image: radial-gradient(100% 100% at 100% 0, #202222 0, #5468ff 100%); */
+    /* box-shadow: rgba(45, 35, 66, .4) 0 2px 4px,rgba(45, 35, 66, .3) 0 7px 13px -3px,rgba(58, 65, 111, .5) 0 -3px 0 inset; */
+
+}
