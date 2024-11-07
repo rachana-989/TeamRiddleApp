@@ -10,7 +10,7 @@ const socketIo = require('socket.io');
 const server = http.createServer(app);
 const io = socketIo(server, {
   cors: {
-    origin: "https://teamriddle.netlify.app/", // or wherever your frontend is hosted
+    origin: "https://teamriddle.netlify.app", // or wherever your frontend is hosted
     methods: ["GET", "POST"]
   }
 });
