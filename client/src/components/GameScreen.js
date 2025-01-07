@@ -234,7 +234,7 @@ const GameScreen = () => {
             <div style={{ display: "flex", direction: "row", justifyContent: "space-between", margin: "5px" }}>
 
                 <p className="game-text" style={{ color: socketConnected ? "yellow" : "red" }}>You are {socketConnected ? 'connected' : 'not connected'}</p>
-                <p className="game-text">Player:  <b>{nickName + ((gameHost == nickName) ? " (Host) " : "")}</b></p>
+                <p className="game-text">Player:  <b>{nickName + ((host && (gameHost == nickName)) ? " (Host) " : "")}</b></p>
             </div>
             {/* <div className="game-riddle-container"> */}
             <div style={{ margin: "5px" }}>
@@ -254,8 +254,10 @@ const GameScreen = () => {
                 )}
             </div>
             {disableButton ? (
-                <div style={{ margin: "auto", fontSize: "40px" }}>
+                <div style={{ margin: "auto", fontSize: "20px" }}>
                     <p className="game-text">Game completed!</p>
+                    <p className="game-text"> The common word was <b>{commonWord}</b></p>
+                    <p className="game-text"> Only host can restart the game!</p>
                     <div style={{ padding: "10px" }}>
                         {(gameHost == nickName) ? <button className="game-button" style={{ display: "block", margin: "auto" }} onClick={handleGameRestart}>Restart the game</button> : <></>}
                     </div>
