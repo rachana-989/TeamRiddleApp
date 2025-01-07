@@ -9,6 +9,7 @@ const roomSchema = new mongoose.Schema({
   roomCode: { type: String, required: true },
   commonWord: { type: String, default: '' },
   activeTeamId:{ type: String, default:'' },
+  host: { type: String, required: true },
   // currentRiddle: {
   //   question: String,
   //   answer: String
@@ -39,7 +40,8 @@ router.post('/create-room', async (req, res) => {
     commonWord: '',
     activeTeamId: null,
     teams:[],
-    currentRiddle:{}
+    currentRiddle:{},
+    host: nickName,
     // currentRiddle: { question: '', answer: '' }
   });
 
@@ -71,10 +73,12 @@ router.post('/join-room', async (req, res) => {
     if (room.members.includes(nickName)) {
       return res.status(400).json({ message: 'Nickname already exists in the room' });
     }
+    if(nickName){
 
-    room.members.push(nickName);
-    await room.save();
-    res.status(200).json({ message: 'Joined room successfully', members: room.members , roomName: room.roomName });
+      room.members.push(nickName);
+      await room.save();
+      res.status(200).json({ message: 'Joined room successfully', members: room.members , roomName: room.roomName });
+    }
   } catch (error) {
     console.error('Error joining room:', error);
     res.status(400).json({ message: 'Error joining room', error });

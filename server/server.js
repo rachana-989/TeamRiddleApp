@@ -8,6 +8,12 @@ require('dotenv').config();
 const http = require('http'); // For creating the server
 const socketIo = require('socket.io');
 const server = http.createServer(app);
+// const io = socketIo(server, {
+//   cors: {
+//     origin: process.env.REACT_APP_URL, // or wherever your frontend is hosted
+//     methods: ["GET", "POST"]
+//   }
+// });
 const io = socketIo(server, {
   cors: {
     origin: "https://teamriddle.netlify.app", // or wherever your frontend is hosted
@@ -15,6 +21,7 @@ const io = socketIo(server, {
   }
 });
 const { Room, router } = require('./routes/Room');
+const { Riddle } = require('./routes/Riddles');
 
 const PORT = process.env.PORT || 5001;
 
@@ -48,7 +55,7 @@ app.get('/api/rooms', async (req, res) => {
 async function generateCommonWord() {
   try {
     const response = await openai.chat.completions.create({
-      model: "gpt-3.5-turbo",
+      model: "gpt-4o-mini",
       messages: [
         { role: "system", content: "You are a game master who provides words for a game." },
         { role: "user", content: "Give me a 5-letter word,just the word." },
@@ -75,16 +82,75 @@ async function generateCommonWord() {
     throw error;
   }
 }
+// async function saveRiddleToDatabase(riddle) {
+//   try {
+//     const newRiddle = new Riddle({
+//       question: riddle.question,
+//       answer: riddle.answer
+//     });
+//     const existingRiddle = await Riddle.findOne({ question: newRiddle.question });
+//     if (!existingRiddle) {
+//       await newRiddle.save();
+//     }
+//     console.log('Riddle saved to the database');
+//   } catch (error) {
+//     console.error('Error saving riddle to database:', error);
+//   }
+// }
+const saveRiddleToDatabase = async (riddle) => {
+  try {
+    const normalizedAnswer = riddle.answer.toLowerCase();
+    const existingRiddle = await Riddle.findOne({
+      answer: { $regex: `^${normalizedAnswer}$`, $options: 'i' } // 'i' makes it case-insensitive
+    }).exec();
+    if (!existingRiddle) {
+      const newRiddle = new Riddle(riddle);
+      await newRiddle.save();
+      console.log('Saved new riddle to database:', newRiddle);
+    } else {
+      console.log('Riddle already exists in database:', existingRiddle);
+    }
+  } catch (error) {
+    console.error('Error saving riddle to database:', error);
+  }
+};
 //function to generate random riddle
-const getRandomRiddle = async (currentRiddle = null) => {
+const getRandomRiddle = async () => {
+  try {
+    // Count the number of riddles in the database
+    const riddleCount = await Riddle.countDocuments();
+
+    if (riddleCount > 10) {
+      // Fetch a random riddle from the database
+      const randomIndex = Math.floor(Math.random() * riddleCount);
+      const randomRiddle = await Riddle.findOne().skip(randomIndex).exec();
+      console.log('Fetched random riddle from database:', randomRiddle);
+      return { question: randomRiddle.question, answer: randomRiddle.answer };
+    } else {
+      // Generate a new riddle if none exist in the database
+      const newRiddle = await fetchRiddleFromAPI();
+      if (newRiddle) {
+        await saveRiddleToDatabase(newRiddle); // Save it to the database
+        return newRiddle;
+      }
+    }
+  } catch (error) {
+    console.error('Error retrieving riddle:', error);
+  }
+  return null;
+};
+
+
+const fetchRiddleFromAPI = async (currentRiddle = null) => {
   try {
     const response = await openai.chat.completions.create({
-      model: "gpt-3.5-turbo",
+      model: "gpt-4o-mini",
       messages: [
         { role: "system", content: "You are a riddle generator." },
-        { role: "user", content: "Generate a riddle with the question and the correct answer in one word, in this format: {\"question\": \"riddle text\", \"answer\": \"riddle answer\"} also Generate a riddle that hasn’t been used before and avoid repeating riddles from previous responses and also dont repeat answers. The riddle should be challenging but solvable, without common answers like ‘time’ or ‘shadow.’ Please aim for unique wordplay, new puzzles, or original concepts. Track previous riddles and ensure each new riddle differs in theme or structure." }
+        { role: "user", content: "Generate a simple riddle with the question and the correct answer in one word, in this format: {\"question\": \"riddle text\", \"answer\": \"riddle answer\"} also Generate a riddle that hasn’t been used before and avoid repeating riddles from previous responses and also dont repeat answers.Please aim for unique wordplay, new puzzles, or original concepts. Track previous riddles and ensure each new riddle differs in theme or structure.Do not include riddles about echoes or sound." }
       ],
       max_tokens: 100,
+      temperature: 0.8,
     });
 
     if (response.choices &&
@@ -99,7 +165,6 @@ const getRandomRiddle = async (currentRiddle = null) => {
       if (currentRiddle && riddleData.question === currentRiddle.question) {
         return getRandomRiddle(currentRiddle); // Re-fetch if duplicate
       }
-
       return riddleData;
     } else {
       console.error('No valid response from OpenAI for riddle generation');
@@ -139,17 +204,19 @@ io.on('connection', (socket) => {
           members: [],
           activeTeamId: null,
           teams: [],
-          currentRiddle: {}
+          commonWord: '',
+          host: nickName
         };
       }
       // Generate a unique riddle for the room using OpenAI
       const riddleResponse = await openai.chat.completions.create({
-        model: "gpt-3.5-turbo",
+        model: "gpt-4o-mini",
         messages: [
           { role: "system", content: "You are a riddle generator." },
-          { role: "user", content: "Generate a riddle with the question and the answer in one word, in this format: {\"question\": \"riddle text\", \"answer\": \"riddle answer\"} also Generate a riddle that hasn’t been used before and avoid repeating riddles from previous responses and also dont repeat answers. The riddle should be challenging but solvable, without common answers like ‘time’ or ‘shadow.’ Please aim for unique wordplay, new puzzles, or original concepts. Track previous riddles and ensure each new riddle differs in theme or structure." },
+          { role: "user", content: "Generate a simple riddle with the question and the answer in one word, in this format: {\"question\": \"riddle text\", \"answer\": \"riddle answer\"} also Generate a riddle that hasn’t been used before and avoid repeating riddles from previous responses and also dont repeat answers. Please aim for unique wordplay, new puzzles, or original concepts. Track previous riddles and ensure each new riddle differs in theme or structure.Do not include riddles about echoes or sound." },
         ],
         max_tokens: 100,
+        temperature: 0.8,
       });
 
       if (
@@ -163,7 +230,7 @@ io.on('connection', (socket) => {
 
         rooms[roomCode].currentRiddle = riddleData;
         console.log(`Generated unique riddle for player ${roomCode}:`, riddleData);
-
+        await saveRiddleToDatabase(riddleData)
         // Send the generated riddle to the room
         socket.emit('newRiddle', riddleData);
       } else {
@@ -202,10 +269,10 @@ io.on('connection', (socket) => {
       return `${roomCode}-${Math.random().toString(36).substring(2, 5)}`; // Example: roomCode-randomString
     }
     if (!rooms[roomCode]) {
-      console.error(`Room with code ${roomCode} does not exist.`);
+      console.error(`Room with code ${roomCode},${rooms[roomCode]} does not exist.`);
       return; // Or handle the error as needed
     }
-    const shuffledMembers = members.sort(() => Math.random() - 0.5);  // Shuffle members
+    const shuffledMembers = [...members].sort(() => Math.random() - 0.5);  // Shuffle members
     const teams = Array.from({ length: teamCount }, () => ({
       teamId: createTeamId(roomCode),
       members: []
@@ -237,6 +304,7 @@ io.on('connection', (socket) => {
 
       // Generate the common word
       const commonWord = await generateCommonWord();
+      const gameHost = rooms[roomCode].host
       if (!commonWord) {
         socket.emit('gameError', 'Failed to generate common word');
         return;
@@ -249,9 +317,9 @@ io.on('connection', (socket) => {
         });
       }
 
+      io.in(roomCode).emit('gameStarted', { commonWord , gameHost });  // Send the word to all players
 
       // Emit the game started event with the common word
-      io.in(roomCode).emit('gameStarted', { commonWord });  // Send the word to all players
     } catch (error) {
       console.error('Error starting game:', error);
       socket.emit('gameError', 'An error occurred while starting the game');
@@ -328,7 +396,6 @@ io.on('connection', (socket) => {
         console.error(`Revealed letters for team ${teamId} is not initialized. ${JSON.stringify(activeTeam, null, 2)}`);
         return;
       }
-      console.log("active team..", activeTeam, "members..", JSON.stringify(rooms[roomCode], null, 2), "actviId..", rooms[roomCode].activeTeamId)
       // Log revealedLetters array before the update
       console.log(`Before revealing: ${revealedLetters}`);
       // Select a random index to reveal
@@ -370,9 +437,59 @@ io.on('connection', (socket) => {
     }
   });
 
+  //Refresh riddle
+  socket.on('fetchRiddle', async ({ roomCode }) => {
+    const newRiddle = await getRandomRiddle();
+    console.log("new riddle fetched..", newRiddle, roomCode)
+    if (newRiddle) {
+      rooms[roomCode].currentRiddle = newRiddle;
+      socket.emit('newRiddle', {
+        question: newRiddle.question,
+        answer: newRiddle.answer,
+      });
+    } else {
+      console.error('Failed to fetch new riddle');
+    }
+  })
+
+  socket.on('restartGame', ({ roomCode, nickname }) => {
+    const room = rooms[roomCode];
+    if (!room) return;
+    console.log("restart triggrered..", roomCode, nickname)
+    // Ensure only the host can restart the game
+    if (room.host == nickname) {
+      console.log(`Host ${nickname} restarted the game for room: ${roomCode}`);
+
+      // Clear previous game data (optional, based on your structure)
+      room.teams = []; // Clear teams for re-randomization
+      room.commonWord = '';
+      room.currentRiddle = null;
+      // Notify all players to return to the lobby
+      io.to(roomCode).emit('returnToLobby', 'The game has been restarted by the host.');
+    } else {
+      socket.emit('error', 'Only the host can restart the game.');
+    }
+  });
+
   // Handle socket disconnection
   socket.on('disconnect', () => {
     console.log('User disconnected:', socket.id);
+    for (const roomCode in rooms) {
+      const room = rooms[roomCode];
+      if (room.members.includes(socket.id)) {
+        // Remove the user from the room's members list
+        room.members = room.members.filter((id) => id !== socket.id);
+
+        // If the room is empty, clean it up
+        if (room.members.length === 0) {
+          cleanupRoom(roomCode);
+        } else {
+          // Notify remaining members about the updated list
+          io.in(roomCode).emit('membersUpdated', room.members);
+        }
+        break; // Exit loop after processing the room
+      }
+    }
     for (const [nickname, sock] of Object.entries(nicknameToSocket)) {
       if (sock === socket) {
         delete nicknameToSocket[nickname];
