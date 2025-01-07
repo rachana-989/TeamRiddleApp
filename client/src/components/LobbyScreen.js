@@ -5,11 +5,12 @@ import { io } from 'socket.io-client';
 import { useNavigate } from 'react-router-dom';
 
 const socket = io('https://teamriddleapp.onrender.com');
+// const socket = io(process.env.REACT_APP_API_URL);
 
 const LobbyScreen = () => {
     const location = useLocation();
     const navigate = useNavigate();
-    const { roomCode, nickName, roomName } = location.state || {};
+    const { roomCode, nickName, roomName, gameHost } = location.state || {};
     const [copySuccess, setCopySuccess] = useState('');
     const [isHost, setIsHost] = useState(false);
     const [teamCount, setTeamCount] = useState(2); // Default team count
@@ -43,7 +44,9 @@ const LobbyScreen = () => {
             setRandomized(true); // Mark teams as randomized
         };
         const handleGameStarted = (commonWord) => {
-            navigate('/game', { state: { teamMembers: teams, roomCode: roomCode, commonWord: commonWord, nickName: nickName } });
+            navigate('/game', { state: { teamMembers: teams, roomCode: roomCode, commonWord: commonWord, nickName: nickName, roomName: roomName, host: isHost } });
+            setIsHost(false);
+
         };
 
         socket.on('gameStarted', handleGameStarted);
@@ -87,7 +90,7 @@ const LobbyScreen = () => {
                     </button>
                 </div>
             </div>
-            <div style={{ margin: -20 }}>
+            <div style={{ marginTop: "50px" }}>
                 <h3 className='description' style={{ color: "white" }}>Current players</h3>
                 <div className='players-container'>
                     <div className='list-container-admin'>
@@ -109,11 +112,11 @@ const LobbyScreen = () => {
                 <p className='description'>Waiting for everyone to join..</p>
                 {isHost & !randomized ? (
                     <p className='description' style={{ color: "white" }}>
-                        You can start the game when you have all the players in. <br /> Minimum number of players required is 4
+                        You can start the game when you have all the players in. <br /> Minimum number of players required is 2
                     </p>
                 ) : (
                     <p className='description' style={{ color: "white" }}>
-                        Game starts when we have all the players in. <br /> Minimum number of players required is 4
+                        Game starts when we have all the players in. <br /> Minimum number of players required is 2
                     </p>
                 )}
                 <div className='players-list'>
@@ -121,11 +124,11 @@ const LobbyScreen = () => {
 
                 </div>
             </div>
-            {members.length < 4 ? (
-                <p className="description">Waiting for more players to join... (Minimum 4 players required)</p>
+            {members.length < 2 ? (
+                <p className="description">Waiting for more players to join... (Minimum 2 players required)</p>
             ) : (
                 <>
-                    {isHost ? (
+                    {(gameHost ? ((gameHost == nickName)) : isHost) ? (
                         <div>
                             <div style={{ display: "flex", flexDirection: "column", width: "200px", margin: "auto" }}>
                                 <label className="description">Select number of teams:</label>
@@ -139,6 +142,7 @@ const LobbyScreen = () => {
                                 <button className="randomize-button" onClick={handleRandomizeTeams}
                                     onMouseEnter={() => setHoveredButton(true)}
                                     onMouseLeave={() => setHoveredButton(null)}
+                                    disabled={gameHost ? (!(gameHost == nickName)) : false}
                                     style={{ backgroundColor: hoveredButton === true ? "#36355f" : '', color: "white", fontWeight: "bold" }}
                                 >
                                     Randomize Teams
@@ -152,8 +156,8 @@ const LobbyScreen = () => {
                                             <p className="description">Team {index + 1}:</p>
                                             <ul>
                                                 {team.members.map((member, idx) => ( // Access team.members
-                                                    <div className='list-container'>
-                                                        <li key={idx} className="list">{member}</li>
+                                                    <div className='list-container' key={`${team.teamId}-${idx}`}>
+                                                        <li key={`${team.teamId}-${member}`} className="list">{member}</li>
                                                     </div>
                                                 ))}
                                             </ul>

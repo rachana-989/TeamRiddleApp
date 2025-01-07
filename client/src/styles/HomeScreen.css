@@ -1,11 +1,33 @@
-.container {
-    /* background-color: white; */
-    align-content: center;
-    flex: 1;
-    border: 100px solid #8d8bb6;
-    height: 100vh;
-    background-color: #2e2d55;
+.mega-container {
+    /* border: 10px solid #1c12da; */
 }
+
+@media screen and (max-width: 2000px) {
+
+    .container {
+        /* background-color: white; */
+        align-content: center;
+        flex: 1;
+        border: 150px solid #8d8bb6;
+        height: 100vh;
+        background-color: #2e2d55;
+    }
+}
+
+@media screen and (max-width: 992px) {
+
+    .container {
+        /* background-color: white; */
+        align-content: center;
+        flex: 1;
+        border: 10px solid #8d8bb6;
+        height: 100vh;
+        background-color: #2e2d55;
+    }
+}
+
+
+
 
 .title {
     color: #ffffff;

@@ -2,13 +2,15 @@
     background-color: #2e2d55;
     flex: 1;
     height: 100vh;
-    overflow: auto
+    overflow: auto;
+    padding: 20px;
 }
 
 .details-container {
     /* border: 1px solid #ffffff; */
-    height: 300px;
+    /* height: 300px; */
     align-content: center;
+    margin-top: 20px;
 }
 
 .description {

@@ -3,7 +3,7 @@ import "./../styles/Modal.css";
 import { useNavigate } from 'react-router-dom';
 import axios from 'axios';
 
-const Modal = ({ isOpen, onClose, onSubmit, mode, isAnswerTrue, isAnswerFalse }) => {
+const WinnerModal = ({ isOpen, onClose, onSubmit, mode, isAnswerTrue, isAnswerFalse, winnerNickNames }) => {
   const [inputValue, setInputValue] = useState(''); // This will be either roomName or roomCode depending on mode
   const [nickName, setNickName] = useState('');
   const [error, setError] = useState('');
@@ -55,9 +55,9 @@ const Modal = ({ isOpen, onClose, onSubmit, mode, isAnswerTrue, isAnswerFalse })
         {isAnswerTrue || isAnswerFalse ? (
           <div>
             {isAnswerTrue ? (
-              <p className="modal-inputs">You are Right!</p>
+              <p className="modal-inputs">Congratulations! Your team guessed the word!!</p>
             ) : (
-              <p className="modal-inputs">Oops!Try again</p>
+              <p className="modal-inputs">Incorrect guess. Keep trying!</p>
             )}
 
             <div className="modal-buttons-container">
@@ -71,33 +71,10 @@ const Modal = ({ isOpen, onClose, onSubmit, mode, isAnswerTrue, isAnswerFalse })
             </div>
           </div>
         ) : (
-
-          <form onSubmit={handleSubmit}>
-            <div className="inputs-container">
-              <input
-                type="text"
-                className="modal-inputs"
-                placeholder={mode === 'host' ? "Enter room name" : "Enter room code"}
-                value={inputValue}
-                onChange={(e) => setInputValue(e.target.value)}
-                required
-              />
-              <input
-                type="text"
-                className="modal-inputs"
-                placeholder="Enter Nick name"
-                value={nickName}
-                onChange={(e) => setNickName(e.target.value)}
-                required
-              />
-            </div>
+          <div>
+            <p className="modal-inputs">Congratulations! Game is over!</p>
+            <p className="modal-inputs">{`Game won by - ${winnerNickNames}`}</p>
             <div className="modal-buttons-container">
-              <button
-                onMouseEnter={() => setHoveredButton('submit')}
-                onMouseLeave={() => setHoveredButton(null)}
-                className='button'
-                style={{ backgroundColor: hoveredButton === 'submit' ? "#36355f" : '', color: "white", fontWeight: "bold" }}
-                type="submit">{mode === 'host' ? 'Create Room' : 'Join Room'}</button>
               <button
                 onMouseEnter={() => setHoveredButton('cancel')}
                 onMouseLeave={() => setHoveredButton(null)}
@@ -106,7 +83,9 @@ const Modal = ({ isOpen, onClose, onSubmit, mode, isAnswerTrue, isAnswerFalse })
                 type="button"
                 onClick={onClose}>Cancel</button>
             </div>
-          </form>
+          </div>
+
+
         )}
         {error && <p className="error-message">{error}</p>}
       </div>
@@ -114,4 +93,4 @@ const Modal = ({ isOpen, onClose, onSubmit, mode, isAnswerTrue, isAnswerFalse })
   );
 };
 
-export default Modal;
+export default WinnerModal;
