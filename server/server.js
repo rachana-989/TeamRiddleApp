@@ -120,7 +120,7 @@ const getRandomRiddle = async () => {
     // Count the number of riddles in the database
     const riddleCount = await Riddle.countDocuments();
 
-    if (riddleCount > 10) {
+    if (riddleCount > 40) {
       // Fetch a random riddle from the database
       const randomIndex = Math.floor(Math.random() * riddleCount);
       const randomRiddle = await Riddle.findOne().skip(randomIndex).exec();
