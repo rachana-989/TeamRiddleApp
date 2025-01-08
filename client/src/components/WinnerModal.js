@@ -67,7 +67,7 @@ const WinnerModal = ({ isOpen, onClose, onSubmit, mode, isAnswerTrue, isAnswerFa
                 className='button'
                 style={{ backgroundColor: hoveredButton === 'cancel' ? "#36355f" : '', color: "white", fontWeight: "bold" }}
                 type="button"
-                onClick={onClose}>Cancel</button>
+                onClick={onClose}>Okay</button>
             </div>
           </div>
         ) : (
@@ -81,7 +81,7 @@ const WinnerModal = ({ isOpen, onClose, onSubmit, mode, isAnswerTrue, isAnswerFa
                 className='button'
                 style={{ backgroundColor: hoveredButton === 'cancel' ? "#36355f" : '', color: "white", fontWeight: "bold" }}
                 type="button"
-                onClick={onClose}>Cancel</button>
+                onClick={onClose}>Okay</button>
             </div>
           </div>
 

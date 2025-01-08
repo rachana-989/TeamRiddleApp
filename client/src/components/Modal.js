@@ -67,7 +67,7 @@ const Modal = ({ isOpen, onClose, onSubmit, mode, isAnswerTrue, isAnswerFalse })
                 className='button'
                 style={{ backgroundColor: hoveredButton === 'cancel' ? "#36355f" : '', color: "white", fontWeight: "bold" }}
                 type="button"
-                onClick={onClose}>Cancel</button>
+                onClick={onClose}>Okay</button>
             </div>
           </div>
         ) : (
